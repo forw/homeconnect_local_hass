@@ -278,13 +278,7 @@ COMMON_ENTITY_DESCRIPTIONS: _EntityDescriptionsDefinitionsType = {
             entity_registry_enabled_default=False,
             has_state_translation=True,
         ),
-        HCSelectEntityDescription(
-            key="select_remote_control_level",
-            entity="BSH.Common.Setting.RemoteControlLevel",
-            entity_category=EntityCategory.CONFIG,
-            entity_registry_enabled_default=False,
-            has_state_translation=True,
-        ),
+        # cleanup: duplicate select_remote_control_level entry removed
         generate_temperature_unit,
     ],
     "sensor": [
@@ -300,6 +294,13 @@ COMMON_ENTITY_DESCRIPTIONS: _EntityDescriptionsDefinitionsType = {
                     "entity": "BSH.Common.Option.RemainingProgramTimeIsEstimated",
                 }
             ],
+        ),
+        HCSensorEntityDescription(
+            key="sensor_elapsed_program_time",
+            entity="BSH.Common.Option.ElapsedProgramTime",
+            device_class=SensorDeviceClass.DURATION,
+            native_unit_of_measurement=UnitOfTime.SECONDS,
+            suggested_unit_of_measurement=UnitOfTime.HOURS,
         ),
         HCSensorEntityDescription(
             key="sensor_program_progress",

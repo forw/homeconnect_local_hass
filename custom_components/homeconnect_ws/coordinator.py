@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import time
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_DESCRIPTION, CONF_DEVICE_ID, CONF_HOST
@@ -55,7 +56,7 @@ class HomeConnectCoordinator(DataUpdateCoordinator):
             always_update=True,
         )
         self.appliance = HomeAppliance(
-            description=config_entry.data[CONF_DESCRIPTION],
+            description=deepcopy(config_entry.data[CONF_DESCRIPTION]),
             host=config_entry.data[CONF_HOST],
             app_name="Homeassistant",
             app_id=config_entry.data[CONF_DEVICE_ID],
@@ -87,11 +88,12 @@ class HomeConnectCoordinator(DataUpdateCoordinator):
                     self.connected = True  # FIX
                     self.async_set_updated_data(None)  # FIX
                     return
-            except ConnectionFailedError, HCHandshakeError:
+            except (ConnectionFailedError, HCHandshakeError):
                 await self.appliance.close()
                 msg = f"Can't connect to {self.config_entry.data[CONF_HOST]}, retrying"
                 if first_failure:
                     self.logger.error(msg)  # noqa: TRY400
+                    first_failure = False  # first_failure_fix
                 else:
                     self.logger.debug(msg)
             except AllreadyConnectedError:
